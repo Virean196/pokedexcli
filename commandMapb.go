@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-func commandMapb(cfg *Config) error {
+func commandMapb(_ []string, cfg *Config) error {
 	if cfg.prevLocationsURL == nil {
 		return fmt.Errorf("you're on the first page")
 	} else {

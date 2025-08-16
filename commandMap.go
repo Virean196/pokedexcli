@@ -6,7 +6,7 @@ import (
 	"github.com/virean196/pokedexcli/internal/pokeapi"
 )
 
-func commandMap(cfg *Config) error {
+func commandMap(_ []string, cfg *Config) error {
 	var urlToFetch string
 
 	if cfg.nextLocationsURL == nil {
