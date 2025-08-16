@@ -6,17 +6,22 @@ import (
 	"io"
 	"net/http"
 	"time"
+
+	"github.com/virean196/pokedexcli/internal/pokecache"
 )
 
 const baseURL = "https://pokeapi.co/api/v2/"
 
+// TODO - Move cache into proper cache package, rn im too dumb for that
 type Client struct {
 	client http.Client
+	cache  *pokecache.Cache
 }
 
 func NewClient() *Client {
 	return &Client{
 		client: http.Client{Timeout: 5 * time.Second},
+		cache:  pokecache.NewCache(5 * time.Minute),
 	}
 }
 
@@ -31,6 +36,15 @@ type Location struct {
 }
 
 func (c *Client) ListLocations(req_url string) (Location, error) {
+	cachedData, exists := c.cache.Get(req_url)
+	if exists {
+		var locations Location
+		if err := json.Unmarshal(cachedData, &locations); err != nil {
+			return Location{}, fmt.Errorf("error unmarshelling locations")
+		}
+		return locations, nil
+	}
+
 	res, err := c.client.Get(req_url)
 	if err != nil {
 		return Location{}, fmt.Errorf("error listing locations")
@@ -41,6 +55,9 @@ func (c *Client) ListLocations(req_url string) (Location, error) {
 	if err != nil {
 		return Location{}, fmt.Errorf("error reading body")
 	}
+
+	c.cache.Add(req_url, body)
+
 	var locations Location
 	if err := json.Unmarshal(body, &locations); err != nil {
 		return Location{}, fmt.Errorf("error unmarshelling locations")
