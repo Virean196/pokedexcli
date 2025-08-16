@@ -8,7 +8,6 @@ import (
 )
 
 func commandCatch(args []string, cfg *Config) error {
-	pokedex := make(map[string]pokeapi.PokemonInfo)
 	baseURL := pokeapi.GetBaseUrl()
 	urlToFetch := baseURL + "pokemon/" + args[1]
 	if len(args) < 2 {
@@ -21,11 +20,9 @@ func commandCatch(args []string, cfg *Config) error {
 	fmt.Printf("Throwing a Pokeball at %s...\n", pokemonInfo.Name)
 	if rand.Intn(pokemonInfo.BaseExperience) < pokemonInfo.BaseExperience/2 {
 		fmt.Printf("%s was caught!\n", pokemonInfo.Name)
-		pokedex[pokemonInfo.Name] = pokemonInfo
-		fmt.Printf("%s added to the pokedex!\n", pokedex[pokemonInfo.Name].Name)
+		cfg.pokedex[pokemonInfo.Name] = pokemonInfo
 	} else {
 		fmt.Printf("%s escaped\n", pokemonInfo.Name)
 	}
-
 	return nil
 }

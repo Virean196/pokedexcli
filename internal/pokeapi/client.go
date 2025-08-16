@@ -12,7 +12,6 @@ import (
 
 const baseURL = "https://pokeapi.co/api/v2/"
 
-// TODO - Move cache into proper cache package, rn im too dumb for that
 type Client struct {
 	client http.Client
 	cache  *pokecache.Cache
